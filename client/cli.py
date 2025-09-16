@@ -4,22 +4,23 @@ import argparse
 import requests
 
 API_URL = "http://127.0.0.1:5000/api/products/"
+REQUEST_TIMEOUT = 5  # seconds
 
 def list_products():
-    res = requests.get(API_URL)
+    res = requests.get(API_URL, timeout=REQUEST_TIMEOUT)
     print(res.json())
 
 def get_product(pid):
-    res = requests.get(f"{API_URL}{pid}")
+    res = requests.get(f"{API_URL}{pid}", timeout=REQUEST_TIMEOUT)
     print(res.json())
 
 def create_product(name, qty, price):
     data = {"name": name, "qty": qty, "price": price}
-    res = requests.post(API_URL, json=data)
+    res = requests.post(API_URL, json=data, timeout=REQUEST_TIMEOUT)
     print(res.json())
 
 def delete_product(pid):
-    res = requests.delete(f"{API_URL}{pid}")
+    res = requests.delete(f"{API_URL}{pid}", timeout=REQUEST_TIMEOUT)
     print("Deleted" if res.status_code == 204 else res.text)
 
 def main():

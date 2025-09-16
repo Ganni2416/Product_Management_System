@@ -1,8 +1,13 @@
-# app/batch_calc.py
+"""
+batch_calc.py
+
+Provides functionality to calculate total product stock in batches
+using both threaded and asynchronous approaches.
+"""
+
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 from .models import Product
-from . import db
 
 BATCH_SIZE = 10
 

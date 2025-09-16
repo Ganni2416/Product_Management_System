@@ -5,9 +5,14 @@ from email.message import EmailMessage
 import threading
 from flask import current_app
 
+
 def send_email(subject: str, body: str, to: str):
-    app = current_app._get_current_object()
-    with app.app_context():  # ✅ Push app context inside thread
+    """
+    Sends an email using the configured SMTP server.
+    """
+    app = current_app._get_current_object()  # pylint: disable=protected-access
+
+    with app.app_context():
         msg = EmailMessage()
         msg["Subject"] = subject
         msg["From"] = app.config["MAIL_DEFAULT_SENDER"]
@@ -23,13 +28,20 @@ def send_email(subject: str, body: str, to: str):
         except Exception as e:
             app.logger.error(f"❌ Failed to send email: {e}")
 
+
 def send_email_async(subject: str, body: str, to: str):
-    # ✅ Capture current app to use it inside thread
-    app = current_app._get_current_object()
+    """
+    Sends an email asynchronously in a background thread.
+    """
+    app = current_app._get_current_object()  # pylint: disable=protected-access
     thread = threading.Thread(target=lambda: send_email_with_context(app, subject, body, to))
     thread.daemon = True
     thread.start()
 
-def send_email_with_context(app, subject, body, to):
+
+def send_email_with_context(app, subject: str, body: str, to: str):
+    """
+    Helper function to push app context inside a thread and send email.
+    """
     with app.app_context():
         send_email(subject, body, to)

@@ -1,28 +1,50 @@
 # app/scraper.py
+
 import requests
 from bs4 import BeautifulSoup
+from requests.exceptions import HTTPError, Timeout, RequestException
 
-def scrape_products(url: str):
+
+def scrape_products(url: str, timeout: float = 5.0):
+    """
+    Scrape product details from the given URL.
+
+    Args:
+        url (str): The URL to scrape.
+        timeout (float): Timeout in seconds for HTTP requests.
+
+    Returns:
+        list: List of dicts with product info (name, price, qty).
+    """
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=timeout)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
 
         products = []
         for item in soup.select(".thumbnail"):
             name = item.select_one(".title").get_text(strip=True)
-            price = float(item.select_one(".price").get_text(strip=True).replace("$", ""))
-            qty = 10
+            price_text = item.select_one(".price").get_text(strip=True)
+            price = float(price_text.replace("$", ""))
+            qty = 10  # default quantity as per original code
             products.append({"name": name, "price": price, "qty": qty})
         return products
-    except Exception as e:
-        print(f"Scraping failed: {e}")
-        return []
+
+    except HTTPError as http_err:
+        print(f"HTTP error occurred during scraping: {http_err}")
+    except Timeout as timeout_err:
+        print(f"Timeout error occurred during scraping: {timeout_err}")
+    except RequestException as req_err:
+        print(f"Request exception occurred during scraping: {req_err}")
+    # Removed catching bare Exception to avoid too general exception
+
+    return []
+
 
 if __name__ == "__main__":
-    url = "https://webscraper.io/test-sites/e-commerce/static/computers/laptops"
-    print(f"Scraping from: {url}")
-    data = scrape_products(url)
+    scrape_url = "https://webscraper.io/test-sites/e-commerce/static/computers/laptops"
+    print(f"Scraping from: {scrape_url}")
+    data = scrape_products(scrape_url)
     print(f"Found {len(data)} products")
 
     # Send to API
