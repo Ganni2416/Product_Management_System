@@ -1,3 +1,4 @@
+# app/config.py
 import os
 
 class Config:
@@ -5,11 +6,15 @@ class Config:
     SQLALCHEMY_DATABASE_URI = "sqlite:///db.sqlite"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # SMTP config example (use env variables in production!)
-    MAIL_SERVER = "smtp.mailtrap.io"
+    # ✅ Gmail SMTP settings
+    MAIL_SERVER = "smtp.gmail.com"
     MAIL_PORT = 587
-    MAIL_USERNAME = os.environ.get("21eg505808@anurag.edu.in", " ")
-    MAIL_PASSWORD = os.environ.get("au12345", " ")
     MAIL_USE_TLS = True
     MAIL_USE_SSL = False
-    MAIL_DEFAULT_SENDER = "noreply@example.com"
+
+    # ✅ Gmail credentials
+    MAIL_USERNAME = "jayanthg533@gmail.com"
+    MAIL_PASSWORD = "bczsgwtmlcoixppi"   # App password
+
+    # ✅ Sender email
+    MAIL_DEFAULT_SENDER = "jayanthg533@gmail.com"
