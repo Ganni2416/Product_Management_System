@@ -1,4 +1,3 @@
-# app/crud.py
 from .models import Product
 from . import db
 
@@ -25,4 +24,24 @@ def update_product(product_id: int, data: dict) -> Product:
 def delete_product(product_id: int) -> None:
     product = Product.query.get_or_404(product_id)
     db.session.delete(product)
+    db.session.commit()
+
+def save_products(products_list: list) -> None:
+    """
+    Save or update multiple products in the database.
+    """
+    for product_data in products_list:
+        existing = Product.query.filter_by(name=product_data['name']).first()
+        if existing:
+            # Update existing product
+            existing.price = product_data['price']
+            existing.qty = product_data.get('qty', 10)
+        else:
+            # Create new product
+            new_product = Product(
+                name=product_data['name'],
+                price=product_data['price'],
+                qty=product_data.get('qty', 10)
+            )
+            db.session.add(new_product)
     db.session.commit()
